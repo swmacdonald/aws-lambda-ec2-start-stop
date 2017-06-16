@@ -1,12 +1,13 @@
 import boto3
 import logging
 
-#setup simple logging for INFO
+# setup simple logging for INFO
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-#define the connection
+# define the connection
 ec2 = boto3.resource('ec2')
+
 
 def lambda_handler(event, context):
     # Use the filter() method of the instances collection to retrieve
@@ -16,23 +17,23 @@ def lambda_handler(event, context):
             'Values': ['True']
         },
         {
-            'Name': 'instance-state-name', 
+            'Name': 'instance-state-name',
             'Values': ['stopped']
         }
     ]
-    
-    #filter the instances
+
+    # filter the instances
     instances = ec2.instances.filter(Filters=filters)
 
-    #locate all stopped instances  
+    # locate all stopped instances
     StoppedInstances = [instance.id for instance in instances]
-    
-    #print the instances for logging purposes
-    #print RunningInstances 
-    
-    #make sure there are actually instances to start up. 
+
+    # print the instances for logging purposes
+    # print RunningInstances
+
+    # make sure there are actually instances to start up.
     if len(StoppedInstances) > 0:
-        #perform the start up
+        # perform the start up
         startingUp = ec2.instances.filter(InstanceIds=StoppedInstances).start()
         print startingUp
     else:
